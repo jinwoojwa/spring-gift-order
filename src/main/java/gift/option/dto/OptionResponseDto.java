@@ -1,0 +1,17 @@
+package gift.option.dto;
+
+import gift.option.entity.Option;
+
+public record OptionResponseDto(
+        Long id,
+        String name,
+        int quantity
+) {
+    public static OptionResponseDto from(Option option) {
+        return new OptionResponseDto(
+                option.getId(),
+                option.getName().toString(),
+                option.getQuantity().value()
+        );
+    }
+}
