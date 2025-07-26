@@ -1,8 +1,8 @@
 package gift.auth.controller;
 
+import gift.auth.config.KakaoOauthProperties;
 import gift.auth.dto.KakaoTokenResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,29 +18,20 @@ import java.io.IOException;
 public class KakaoAuthController {
 
     private final RestClient restClient = RestClient.create();
+    private final KakaoOauthProperties kakaoProps;
 
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
+    public KakaoAuthController(KakaoOauthProperties kakaoProps) {
+        this.kakaoProps = kakaoProps;
+    }
 
     @GetMapping("/login")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
-        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
-                "?response_type=code" +
-                "&client_id=" + clientId +
-                "&redirect_uri=" + redirectUri;
-
-        response.sendRedirect(kakaoAuthUrl);
+        response.sendRedirect(kakaoProps.getAuthorizeUrl());
     }
 
     @GetMapping("/callback")
     public ResponseEntity<KakaoTokenResponseDto> kakaoCallback(@RequestParam("code") String code) {
-        String body = "grant_type=authorization_code" +
-                "&client_id=" + clientId +
-                "&redirect_uri=" + redirectUri +
-                "&code=" + code;
+        String body = kakaoProps.getTokenRequestBody(code);
 
         ResponseEntity<KakaoTokenResponseDto> response = restClient.post()
                 .uri("https://kauth.kakao.com/oauth/token")
