@@ -2,7 +2,10 @@ package gift.auth.controller;
 
 import gift.auth.config.KakaoOauthProperties;
 import gift.auth.dto.KakaoTokenResponseDto;
+import gift.common.exception.KakaoOAuthClientException;
+import gift.common.exception.KakaoOAuthServerException;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,16 +36,22 @@ public class KakaoAuthController {
     public ResponseEntity<KakaoTokenResponseDto> kakaoCallback(@RequestParam("code") String code) {
         String body = kakaoProps.getTokenRequestBody(code);
 
-        ResponseEntity<KakaoTokenResponseDto> response = restClient.post()
+        ResponseEntity<KakaoTokenResponseDto> res = restClient.post()
                 .uri("https://kauth.kakao.com/oauth/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, ((request, response) -> {
+                    throw new KakaoOAuthClientException(response.getStatusCode().value(), response.getBody().toString());
+                }))
+                .onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+                    throw new KakaoOAuthServerException(response.getStatusCode().value(), response.getBody().toString());
+                }))
                 .toEntity(KakaoTokenResponseDto.class);
 
         return ResponseEntity
-                .status(response.getStatusCode())
-                .body(response.getBody());
+                .status(res.getStatusCode())
+                .body(res.getBody());
     }
 
 
