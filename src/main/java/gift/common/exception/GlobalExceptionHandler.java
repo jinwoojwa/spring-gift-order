@@ -56,4 +56,16 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleProductOptionRequired(ProductOptionRequiredException ex) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
+
+    @ExceptionHandler(KakaoOAuthClientException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleKakaoOAuthClientException(KakaoOAuthClientException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(KakaoOAuthServerException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleKakaoOAuthServerException(KakaoOAuthServerException ex) {
+        return new ErrorResponse(HttpStatus.BAD_GATEWAY.value(), ex.getMessage());
+    }
 }
