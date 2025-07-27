@@ -7,7 +7,8 @@ public record KakaoOauthProperties(
         String clientId,
         String redirectUri,
         String authUrl,
-        String tokenUrl
+        String tokenUrl,
+        String userInfoUrl
 ) {
     public String getAuthorizeUrl() {
         return authUrl +
