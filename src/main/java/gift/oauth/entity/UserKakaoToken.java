@@ -36,4 +36,8 @@ public class UserKakaoToken {
         this.accessToken = accessToken;
         this.accessTokenExpiresAt = accessTokenExpiresAt;
     }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
 }
