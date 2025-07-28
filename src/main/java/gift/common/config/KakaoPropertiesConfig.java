@@ -1,6 +1,6 @@
 package gift.common.config;
 
-import gift.auth.config.KakaoOauthProperties;
+import gift.oauth.config.KakaoOauthProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

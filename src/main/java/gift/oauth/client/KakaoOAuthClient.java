@@ -1,8 +1,8 @@
-package gift.auth.client;
+package gift.oauth.client;
 
-import gift.auth.config.KakaoOauthProperties;
-import gift.auth.dto.KakaoTokenResponseDto;
-import gift.auth.dto.KakaoUserInfoResponseDto;
+import gift.oauth.config.KakaoOauthProperties;
+import gift.oauth.dto.KakaoTokenResponseDto;
+import gift.oauth.dto.KakaoUserInfoResponseDto;
 import gift.common.exception.KakaoOAuthClientException;
 import gift.common.exception.KakaoOAuthServerException;
 import org.springframework.http.HttpStatusCode;
