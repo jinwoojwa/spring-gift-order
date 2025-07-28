@@ -1,6 +1,6 @@
 package gift.member.entity;
 
-import gift.member.dto.MemberUpdateRequestDto;
+import gift.oauth.entity.UserKakaoToken;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +21,9 @@ public class Member {
     @Column(nullable = false)
     private Role role; // USER, ADMIN
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserKakaoToken kakaoToken;
+
     protected Member() {
     }
 
@@ -34,6 +37,7 @@ public class Member {
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public Role getRole() { return role; }
+    public UserKakaoToken getKakaoToken() { return kakaoToken; }
 
     public void updateEmail(String email) {
         this.email = email;
@@ -43,5 +47,9 @@ public class Member {
     }
     public void updateRole(Role role) {
         this.role = role;
+    }
+
+    public void setKakaoToken(UserKakaoToken kakaoToken) {
+        this.kakaoToken = kakaoToken;
     }
 }

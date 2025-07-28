@@ -3,6 +3,7 @@ package gift.auth.service;
 import gift.auth.client.KakaoOAuthClient;
 import gift.auth.dto.KakaoTokenResponseDto;
 import gift.auth.dto.KakaoUserInfoResponseDto;
+import gift.common.security.JwtUtil;
 import gift.member.dto.MemberResponseDto;
 import gift.member.entity.Member;
 import gift.member.entity.Role;
@@ -15,10 +16,12 @@ public class DefaultKakaoAuthService implements KakaoAuthService {
 
     private final MemberRepository memberRepository;
     private final KakaoOAuthClient kakaoOAuthClient;
+    private final JwtUtil jwtUtil;
 
-    public DefaultKakaoAuthService(MemberRepository memberRepository,  KakaoOAuthClient kakaoOAuthClient) {
+    public DefaultKakaoAuthService(MemberRepository memberRepository,  KakaoOAuthClient kakaoOAuthClient,  JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.kakaoOAuthClient = kakaoOAuthClient;
+        this.jwtUtil = jwtUtil;
     }
 
     public String getKakaoAuthorizeUrl() {
@@ -38,6 +41,9 @@ public class DefaultKakaoAuthService implements KakaoAuthService {
                     Member newMember = new Member(userInfo.getEmail(), "password111", Role.USER);
                     return memberRepository.save(newMember);
                 });
+
+        // JWT 발급
+        String jwt = jwtUtil.generateToken(member.getEmail(), member.getId(), member.getRole().name());
 
         return new MemberResponseDto(member);
     }
