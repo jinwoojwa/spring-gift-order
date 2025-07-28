@@ -57,6 +57,12 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
+    @ExceptionHandler(OptionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleOptionNotFound(OptionNotFoundException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    }
+
     @ExceptionHandler(KakaoOAuthClientException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleKakaoOAuthClientException(KakaoOAuthClientException ex) {
