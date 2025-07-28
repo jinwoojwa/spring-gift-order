@@ -15,11 +15,14 @@ import org.springframework.web.client.RestClient;
 public class KakaoOAuthClient {
 
     private final RestClient kakaoAuthClient;
+    private final RestClient kakaoApiClient;
     private final KakaoOauthProperties kakaoProps;
 
     public KakaoOAuthClient(@Qualifier("kakaoAuthClient") RestClient kakaoAuthClient,
+                            @Qualifier("kakaoApiClient")  RestClient kakaoApiClient,
                             KakaoOauthProperties kakaoProps) {
         this.kakaoAuthClient = kakaoAuthClient;
+        this.kakaoApiClient = kakaoApiClient;
         this.kakaoProps = kakaoProps;
     }
 
@@ -45,7 +48,7 @@ public class KakaoOAuthClient {
     }
 
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
-        return kakaoAuthClient.get()
+        return kakaoApiClient.get()
                 .uri(kakaoProps.userInfoUrl())
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
