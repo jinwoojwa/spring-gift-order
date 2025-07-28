@@ -5,6 +5,7 @@ import gift.oauth.dto.KakaoTokenResponseDto;
 import gift.oauth.dto.KakaoUserInfoResponseDto;
 import gift.common.exception.KakaoOAuthClientException;
 import gift.common.exception.KakaoOAuthServerException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,10 +14,12 @@ import org.springframework.web.client.RestClient;
 @Component
 public class KakaoOAuthClient {
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient kakaoAuthClient;
     private final KakaoOauthProperties kakaoProps;
 
-    public KakaoOAuthClient(KakaoOauthProperties kakaoProps) {
+    public KakaoOAuthClient(@Qualifier("kakaoAuthClient") RestClient kakaoAuthClient,
+                            KakaoOauthProperties kakaoProps) {
+        this.kakaoAuthClient = kakaoAuthClient;
         this.kakaoProps = kakaoProps;
     }
 
@@ -27,7 +30,7 @@ public class KakaoOAuthClient {
     public KakaoTokenResponseDto requestToken(String code) {
         String body = kakaoProps.getTokenRequestBody(code);
 
-        return restClient.post()
+        return kakaoAuthClient.post()
                 .uri(kakaoProps.tokenUrl())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
@@ -42,10 +45,9 @@ public class KakaoOAuthClient {
     }
 
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
-        return restClient.get()
+        return kakaoAuthClient.get()
                 .uri(kakaoProps.userInfoUrl())
                 .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
                     throw new KakaoOAuthClientException(res.getStatusCode().value(), res.getBody().toString());
