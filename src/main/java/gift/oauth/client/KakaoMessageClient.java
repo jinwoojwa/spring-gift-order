@@ -1,10 +1,7 @@
 package gift.oauth.client;
 
-import gift.common.exception.KakaoOAuthClientException;
-import gift.common.exception.KakaoOAuthServerException;
 import gift.oauth.config.KakaoOauthProperties;
 import gift.oauth.util.KakaoMessageTemplateMaker;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -47,12 +44,6 @@ public class KakaoMessageClient {
                     .header("Authorization", "Bearer " + accessToken)
                     .body(encoded)
                     .retrieve()
-                    .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                        throw new KakaoOAuthClientException(response.getStatusCode().value(), response.getBody().toString());
-                    })
-                    .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new KakaoOAuthServerException(response.getStatusCode().value(), response.getBody().toString());
-                    })
                     .toBodilessEntity();
         } catch (RestClientException e) {
             throw new RuntimeException("카카오 API 요청 중 네트워크 오류가 발생했습니다.", e);
