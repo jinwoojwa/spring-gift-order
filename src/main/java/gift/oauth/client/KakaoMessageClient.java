@@ -2,10 +2,8 @@ package gift.oauth.client;
 
 import gift.oauth.config.KakaoOauthProperties;
 import gift.oauth.util.KakaoMessageTemplateMaker;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -18,11 +16,11 @@ public class KakaoMessageClient {
     private final KakaoMessageTemplateMaker templateMaker;
 
     public KakaoMessageClient(
-            @Qualifier("kakaoApiClient") RestClient restClient,
+            RestClient kakaoApiClient,
             KakaoOauthProperties kakaoProps,
             KakaoMessageTemplateMaker templateMaker
     ) {
-        this.kakaoRestClient = restClient;
+        this.kakaoRestClient = kakaoApiClient;
         this.kakaoProps = kakaoProps;
         this.templateMaker = templateMaker;
     }

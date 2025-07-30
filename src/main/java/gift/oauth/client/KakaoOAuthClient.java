@@ -5,7 +5,6 @@ import gift.oauth.dto.KakaoTokenResponseDto;
 import gift.oauth.dto.KakaoUserInfoResponseDto;
 import gift.common.exception.KakaoOAuthClientException;
 import gift.common.exception.KakaoOAuthServerException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -18,9 +17,11 @@ public class KakaoOAuthClient {
     private final RestClient kakaoApiClient;
     private final KakaoOauthProperties kakaoProps;
 
-    public KakaoOAuthClient(@Qualifier("kakaoAuthClient") RestClient kakaoAuthClient,
-                            @Qualifier("kakaoApiClient")  RestClient kakaoApiClient,
-                            KakaoOauthProperties kakaoProps) {
+    public KakaoOAuthClient(
+            RestClient kakaoAuthClient,
+            RestClient kakaoApiClient,
+            KakaoOauthProperties kakaoProps
+    ) {
         this.kakaoAuthClient = kakaoAuthClient;
         this.kakaoApiClient = kakaoApiClient;
         this.kakaoProps = kakaoProps;
