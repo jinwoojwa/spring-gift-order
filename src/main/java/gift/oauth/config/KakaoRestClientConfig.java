@@ -1,6 +1,5 @@
 package gift.oauth.config;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +13,6 @@ public class KakaoRestClientConfig {
     private static final int TIMEOUT_MILLIS = 5000;
 
     @Bean
-    @Qualifier("kakaoApiClient") // https://kapi.kakao.com
     public RestClient kakaoApiClient() {
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
         requestFactory.setReadTimeout(TIMEOUT_MILLIS);
@@ -27,7 +25,6 @@ public class KakaoRestClientConfig {
     }
 
     @Bean
-    @Qualifier("kakaoAuthClient") // https://kauth.kakao.com
     public RestClient kakaoAuthClient() {
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
         requestFactory.setReadTimeout(TIMEOUT_MILLIS);
