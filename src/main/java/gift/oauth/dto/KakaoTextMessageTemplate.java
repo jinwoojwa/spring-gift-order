@@ -1,13 +1,15 @@
 package gift.oauth.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record KakaoTextMessageTemplate(
-        String objectType,
-        String text,
-        Link link,
-        String buttonTitle
+        @JsonProperty("object_type") String objectType,
+        @JsonProperty("text") String text,
+        @JsonProperty("link") Link link,
+        @JsonProperty("button_title") String buttonTitle
 ) {
     public record Link(
-            String webUrl,
-            String mobileWebUrl
+            @JsonProperty("web_url") String webUrl,
+            @JsonProperty("mobile_web_url") String mobileWebUrl
     ) {}
 }
