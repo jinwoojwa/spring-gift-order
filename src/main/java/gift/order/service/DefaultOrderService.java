@@ -4,18 +4,19 @@ import gift.common.exception.MemberNotFoundException;
 import gift.common.exception.OptionNotFoundException;
 import gift.member.entity.Member;
 import gift.member.repository.MemberRepository;
-import gift.oauth.client.KakaoMessageClient;
 import gift.oauth.entity.UserKakaoToken;
 import gift.option.entity.Option;
 import gift.option.repository.OptionRepository;
+import gift.order.dto.OrderInfoDto;
 import gift.order.dto.OrderRequestDto;
 import gift.order.dto.OrderResponseDto;
 import gift.order.entity.Order;
+import gift.order.event.OrderEvent;
 import gift.order.repository.OrderRepository;
 import gift.wishlist.entity.Wishlist;
 import gift.wishlist.repository.WishlistRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,27 +25,24 @@ import java.util.Optional;
 @Service
 public class DefaultOrderService implements OrderService {
 
-    @Value("${order.message-template}")
-    private String messageTemplate;
-
     private final MemberRepository memberRepository;
     private final OptionRepository optionRepository;
     private final WishlistRepository wishlistRepository;
     private final OrderRepository orderRepository;
-    private final KakaoMessageClient  kakaoMessageClient;
+    private final ApplicationEventPublisher eventPublisher;
 
     public DefaultOrderService(
             MemberRepository memberRepository,
             OptionRepository optionRepository,
             WishlistRepository wishlistRepository,
             OrderRepository orderRepository,
-            KakaoMessageClient kakaoMessageClient
+            ApplicationEventPublisher eventPublisher
     ) {
         this.memberRepository = memberRepository;
         this.optionRepository = optionRepository;
         this.wishlistRepository = wishlistRepository;
         this.orderRepository = orderRepository;
-        this.kakaoMessageClient = kakaoMessageClient;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -72,8 +70,17 @@ public class DefaultOrderService implements OrderService {
         Order order = new Order(member, option, requestDto.quantity(), requestDto.message(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
-        // 카카오톡 메시지 전송
-        kakaoMessageClient.sendOrderMessage(kakaoToken.getAccessToken(), buildMessage(savedOrder));
+        // 주문 이벤트 발행
+        OrderInfoDto infoDto = new OrderInfoDto(
+                savedOrder.getId(),
+                savedOrder.getOption().getProduct().getName(),
+                savedOrder.getOption().getName().name(),
+                savedOrder.getQuantity(),
+                savedOrder.getMessage(),
+                savedOrder.getOrderDateTime(),
+                kakaoToken.getAccessToken()
+        );
+        eventPublisher.publishEvent(new OrderEvent(infoDto));
 
         return new OrderResponseDto(
                 savedOrder.getId(),
@@ -81,16 +88,6 @@ public class DefaultOrderService implements OrderService {
                 savedOrder.getQuantity(),
                 savedOrder.getOrderDateTime(),
                 savedOrder.getMessage()
-        );
-    }
-
-    private String buildMessage(Order order) {
-        return messageTemplate.formatted(
-                order.getOption().getProduct().getName(),
-                order.getOption().getName(),
-                order.getQuantity(),
-                order.getMessage(),
-                order.getOrderDateTime().toString()
         );
     }
 }
