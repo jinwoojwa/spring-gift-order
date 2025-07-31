@@ -15,6 +15,7 @@ import gift.order.repository.OrderRepository;
 import gift.wishlist.entity.Wishlist;
 import gift.wishlist.repository.WishlistRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,9 @@ import java.util.Optional;
 
 @Service
 public class DefaultOrderService implements OrderService {
+
+    @Value("${order.message-template}")
+    private String messageTemplate;
 
     private final MemberRepository memberRepository;
     private final OptionRepository optionRepository;
@@ -81,15 +85,7 @@ public class DefaultOrderService implements OrderService {
     }
 
     private String buildMessage(Order order) {
-        return """
-                ✅ 주문이 완료되었습니다!
-                
-                - 상품명: %s
-                - 옵션: %s
-                - 수량: %d
-                - 메시지: %s
-                - 주문일시: %s
-                """.formatted(
+        return messageTemplate.formatted(
                 order.getOption().getProduct().getName(),
                 order.getOption().getName(),
                 order.getQuantity(),
