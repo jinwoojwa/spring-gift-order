@@ -24,11 +24,14 @@ fi
 DEPLOY_PATH=/home/ubuntu/build/
 echo "배포 경로: $DEPLOY_PATH"
 
-cp $BUILD_PATH $DEPLOY_PATH
+if [ "$BUILD_PATH" != "$DEPLOY_PATH$JAR_NAME" ]; then
+  cp "$BUILD_PATH" "$DEPLOY_PATH"
+fi
+
 cd $DEPLOY_PATH
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "애플리케이션 실행: $DEPLOY_JAR"
-nohup java -jar $DEPLOY_JAR > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar "$DEPLOY_JAR" > app.log 2>&1 &
 
 echo "배포 스크립트 종료"
