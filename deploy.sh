@@ -32,6 +32,6 @@ cd $DEPLOY_PATH
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "애플리케이션 실행: $DEPLOY_JAR"
-nohup java -jar "$DEPLOY_JAR" > app.log 2>&1 &
+nohup java -jar $DEPLOY_JAR --spring.config.additional-location=file:/home/ubuntu/build/secrets.properties > /dev/null 2>&1 &
 
 echo "배포 스크립트 종료"
