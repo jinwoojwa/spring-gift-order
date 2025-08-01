@@ -1,4 +1,4 @@
-package gift.auth.config;
+package gift.oauth.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -8,7 +8,8 @@ public record KakaoOauthProperties(
         String redirectUri,
         String authUrl,
         String tokenUrl,
-        String userInfoUrl
+        String userInfoUrl,
+        String messageUrl
 ) {
     public String getAuthorizeUrl() {
         return authUrl +

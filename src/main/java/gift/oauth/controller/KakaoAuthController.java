@@ -1,7 +1,7 @@
-package gift.auth.controller;
+package gift.oauth.controller;
 
-import gift.auth.service.KakaoAuthService;
-import gift.member.dto.MemberResponseDto;
+import gift.oauth.dto.KakaoLoginResponseDto;
+import gift.oauth.service.KakaoAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +28,8 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<MemberResponseDto> kakaoCallback(@RequestParam("code") String code) {
-        MemberResponseDto memberDto = kakaoAuthService.loginWithKakao(code);
-        return ResponseEntity.status(HttpStatus.OK).body(memberDto);
+    public ResponseEntity<KakaoLoginResponseDto> kakaoCallback(@RequestParam("code") String code) {
+        KakaoLoginResponseDto responseDto = kakaoAuthService.loginWithKakao(code);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
