@@ -21,7 +21,7 @@ else
   echo "애플리케이션이 종료되었습니다."
 fi
 
-DEPLOY_PATH=/home/ubuntu/
+DEPLOY_PATH=/home/ubuntu/build/
 echo "배포 경로: $DEPLOY_PATH"
 
 cp $BUILD_PATH $DEPLOY_PATH
